@@ -75,8 +75,59 @@ end</code></pre>
     kill=require(exec.kill),
     kick=require(exec.kick),
     log=require(exec.log)
-}</code></pre>
-        </div>
+}</code></pre></div>
+      <div class="dividersmallblank"></div>
+      <h2>Comamnds in Discord</h2>
+      <h3>Setting up Command Permissions</h3>
+      <div class="info-box">In /discord/groups.json, you need to specify command names. They're already done for you. However, you must specify groups that commands are in and what
+        roles people have to have etc. For example:
+        <pre><code class="code-block">{
+    "groups":{
+        "staff":{
+            "roleIDs":[
+                "1469245319014514790"
+            ],
+            "userIDs":[
+                
+            ],
+            "blacklistedRoleIDs":[
+                
+            ],
+            "blacklistedUserIDs":[
+                
+            ]
+        }
+    },
+    "commands":{
+        "about":{
+            "enabled":true,
+            "everyoneCanUse":false,
+            "group":"staff"
+        },
+        "search":{
+            "enabled":true,
+            "everyoneCanUse":false,
+            "group":"staff"
+        },
+        "apikey":{
+            "enabled":true,
+            "everyoneCanUse":false,
+            "group":"staff"
+        },
+        "execute":{
+            "enabled":true,
+            "everyoneCanUse":false,
+            "group":"staff"
+        },
+        "players":{
+            "enabled":true,
+            "everyoneCanUse":false,
+            "group":"staff"
+        }
+    }
+}</code></pre> Based on this, configure the default "staff" group to do the following. Add any role ID that is used by staff in a string. Any IDs of users or roles in a list must be as a string to work. Blacklisted always overpower whitelisted.
+      </div>
+
     </section></div>
   </main>
 

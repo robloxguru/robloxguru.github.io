@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RobloxGURU</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h2>RobloxGURU</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-section-title">Overview</a>
+      <a href="/roblox/api/overview">├ API Overview</a>
+      <a href="/roblox/api/setup">├ Setup | Tutorial</a>
+      <a href="/roblox/api/download">├ Download</a>
+      <a class="nav-section-title">Documentation</a>
+      <a href="/roblox/api/documentation/roblox/modules">├ Roblox Modules</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <section class="doc-section" id="overview">
+        <h1>Setup Tutorial</h1>
+        <div class="depreciation-box">
+            <strong></strong> This page will tell you how to set everything up correctly and how to make it work. Later, you'll be able to see how to set up new commands within ROBLOX, not Discord and <strong>NOT</strong> how to build them.
+        </div>
+        <div class="divider"></div>
+        <h2>API / Variables</h2>
+        <h3>apiKey</h3>
+        <div class="info-box">This is already set up for you, nothing needs to be changed here c:</div>
+        <div class="dividersmallblank"></div>
+        <h3>url</h3>
+        <div class="info-box">Within the "url.url" variable, set the string to be your hosting destination. You must have a "/" on the end to make sure that string parsing works correctly.</div>
+        <div class="dividersmallblank"></div>
+        <h3>rauth</h3>
+        <div class="info-box">You'll need to make a random string. For example, use <a href="https://jam.dev/utilities/random-string-generator">a random string generator</a>. Add this random string to rauth.key.
+        After you've done so, head over to  <a href="https://emn178.github.io/online-tools/sha256.html">this site</a> and hash this string with SHA256. Put this hashed string in your JS external server.
+        Set the constant variable "PRESET_RAUTH_HASH" on line 128 to your hashed string. Make sure that special characters do not interfere. <strong>Upon changing one string</strong>, you must re-hash the other.
+        In ROBLOX, it should be unhashed; JS should be hashed.</div>
+        <div class="divider"></div>
+        <h2>DISCORD</h2>
+        <h3>Bot Setup</h3>
+        <div class="info-box">Head over to the <a href="https://discord.com/developers/applications" target="_blank">Discord Developer Portal</a>.
+        After you've done so and you're logged in, make sure to hit "New Application" in the top right. Give it any name you want, agree to the DToS and DP, and hit create. You should now be in the bot's page. On the left, go into
+    the installation tab. Uncheck "User Install", and switch the Install Link to "None". Save changes. In the OAuth2 section in the left panel, scroll down to the "OAuth2 URL Generator". Select "Bot". You may now give it any permissions
+that you would like it to have. The default commands require no permissions. At the bottom of the page, make sure the integration type is set to "Guild Install". Copy the generated URL, paste it in a browser and add the bot to your DISCORD
+server. Now, on the left, head over to the "Bot" section. You must now "Reset Token" under the "Token" header. Copy this token and head over to your JS server. Find config/dc/config.env, and set the BOT_TOKEN to the token you just copied. In
+the bot page under where you just copied the token, disable "Public Bot". Save changes. Now, head over to your DISCORD server, and copy the guild ID. In config.env, replace GUILD_ID with the numbers you copied. If you do not
+know how to copy a guild ID, check <a href="https://www.youtube.com/watch?v=21O1H7J1BXE" target="_blank">this page</a> out. Everything should be set up correctly for the DISCORD bot.</div>
+        <div class="divider"></div>
+        <h2>Dependencies</h2>
+        <h3>Installing Dependencies and Setting up Node JS</h3>
+        <div class="info-box">Install node JS on your hosting service, you may find sources online on how to do so. Head over to your JS server files. Go to package.json and find "dependencies". In your console, you must run "npm install [dependency name]". This will be listed. If for whatever reason you cannot
+          find it, run the following command: <strong>npm install discord.js dotenv express sqlite3</strong>. After it's installed, you're all set. Make your hosting service run /api/index.js to start your server up.
+        </div>
+
+        <div class="divider"></div>
+        <h2>Adding new Roblox Commands</h2>
+        <h3>Making modules</h3>
+        <div class="info-box">You should make a module script under the "Executors" folder. Make it return a function. See below for an example of a working command script.
+          <pre><code class="code-block">return function(data)
+    print(data)
+end</code></pre>
+        That is how it should be structued: a function being returned and only accepting one parameter. "Data" is the rest of the string after parsing command name. Data can be nil if only a command name is provided during an API request.</div>
+        <div class="dividersmallblank"></div>
+        <h3>Defining Commands</h3>
+        <div class="info-box">You should define all commands in ServerScriptService/api/getInboundData on line 12. Add the command name and set the value to require the module script you created under
+          executors. For example:
+          <pre><code class="code-block">local commandDictionary = {
+    kill=require(exec.kill),
+    kick=require(exec.kick),
+    log=require(exec.log)
+}</code></pre>
+        </div>
+    </section></div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
+  <script src="/script.js"></script>
+</body>
+</html>

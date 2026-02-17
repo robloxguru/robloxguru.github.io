@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RobloxGURU</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h2>RobloxGURU</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-section-title">Overview</a>
+      <a href="/roblox/api/overview">├ API Overview</a>
+      <a href="/roblox/api/setup">├ Setup | Tutorial</a>
+      <a href="/roblox/api/download">├ Download</a>
+      <a class="nav-section-title">Documentation</a>
+      <a href="/roblox/api/documentation/roblox/modules">├ Roblox Modules</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <section class="doc-section" id="robloxmodules">
+        <h1>Roblox: Modular Systems Overview</h1>
+        <p></p>
+        <div class="warning-box">
+            <strong></strong> This will only provide documentation for the <strong>default</strong> scripts provided through RobloxGURU. Anything you change may make this documentation not support your own features that you added.
+        </div>
+        <div class="divider"></div>
+        <pre><code class="code-block">ServerScriptService/
+    api/
+        getInboundData
+            Executors/
+                kick
+                kill
+                log
+            Helper/
+                getPlayerByPartial
+                seperate
+        keepAlive
+        updatePlayers
+        apiKey
+        url
+        rauth</code>
+        </pre>
+        <div class="dividersmallblank"></div>
+        <h2>Documentation</h2>
+        <p></p>
+        <div class="depreciation-box">
+            <strong></strong> This documents all of the scripts / modular scripts within the hierachy above. This will <strong>not</strong> include how to use them. You may find how to do so <strong>after</strong> this section.
+        </div>
+        <div class="dividersmall"></div>
+        <h3>getInboundData</h3>
+        <p></p>
+        <div class="info-box">
+            This script connects via the HttpService provided by ROBLOX. It will read the url (target endpoint) from "url", the module script, through the function get(). It will then get() from the module script "apiKey", where it will return a random string for that particular game instance. Multiple commands are then configured to go through a module script after being parsed.
+        </div>
+        <p></p>
+        <p>
+            This script is the main thing that is responsible for handling data that is coming inbound. Due to ROBLOX limitations, external services may <strong>not</strong> connect to ROBLOX servers. Instead, to get around that, your ROBLOX server instances will make a request of, by default, 5 requests a second to /internal/server/get/data/commands. It will parse data that's been enqued through either an external API that's provided by default (you may disable connections from external sources), or through DISCORD commands.
+        </p>
+        <pre>
+            <code class="code-block">local commandDictionary = {
+    kill=require(exec.kill),
+    kick=require(exec.kick),
+    log=require(exec.log)
+}</code>
+        </pre>
+        <p>
+            This dictionary stores all the commands that should be able to be executed and through which module script they should be ran.
+            For example, the <strong>kill</strong> in commandDictionary is the <strong>command name</strong>; the <strong>exec.kill</strong> is the module that's ran for that command.
+            The command name will always be parsed as the first characters before a whitespace (" "). The data received from /internal/server/get/data/commands will be parsed into
+            2 sections within an array. For example, <strong>kill kablankooo</strong> is the unparsed data. The script will find the command name (kill) as it's the first characters
+            before a whitespace. The remains (kablankooo) will be in the second part of the array. This will be provided to the module within the <strong>Executors</strong> folder.
+        </p>
+        <p>
+            If the unparsed data only has the command name and no characters after that, for example, <strong>kill</strong>, then it will be parsed as the command name being the first characters before whitespace, but the second item in the array as "nil", as no data.
+        </p>
+        <div class="dividersmall"></div>
+        <h3>keepAlive</h3>
+        <p></p>
+        <div class="info-box">
+            This script updates the JS server of which API key is tied to which ROBLOX job ID every, by default, 6 seconds.
+        </div>
+        <p></p>
+        <p>
+            Every 6 seconds, the ROBLOX server instance will make a request to /internal/server/keepAlive with 3 headers of "authorization", "apikey" and "jobid".
+            This will let the external server know that a ROBLOX instance is still active, and to keep allowing requests tied to an API key. The main function of this
+            is to allow the JS server (external server) know that the API key is still valid, and for the server to also know which job ID the data commands should
+            be sent to etc. Without this, the API key would never work and data of that API key would be frequently removed as any ROBLOX instances that haven't
+            updated the JS server within 20 seconds will be wiped of enqued data and their API key.
+        </p>
+
+        <div class="dividersmall"></div>
+        <h3>updatePlayers</h3>
+        <p></p>
+        <div class="info-box">
+            updatePlayers is the primary script that is responsible for keeping track of which players are in which server with what data.
+        </div>
+        <p></p>
+        <p>
+            Every 10 seconds, your ROBLOX instance will make a request to /internal/server/submitPlayers with a payload of a dictionary with
+            ROBLOX players. By default, this includes UserId, DisplayName, Verified, Name, ApiKey and jobId. ApiKey and JobId are just to show extra authentication
+            for the JS server to know if the player is in the correct instance.
+        </p>
+        <div class="dividersmallblank"></div>
+        <pre>
+            <code class="code-block">for _, player in ipairs(Players:GetPlayers()) do
+    playerData[player.Name] = {
+            UserId = player.UserId,
+            DisplayName = player.DisplayName,
+            Verified = player.HasVerifiedBadge,
+            Name = player.Name,
+            ApiKey = key,
+            jobId = jobId
+    }
+end </code>
+        </pre>
+        <p>
+            The script above shows how each player data is sent. You can easily add extra data just as, for an RP game, what vehicle, team or callsign that user has by simply adding it to  the loop.
+        </p>
+
+
+        <div class="dividersmall"></div>
+        <h3>apiKey | url | rauth</h3>
+        <p></p>
+        <div class="info-box">
+            These are all modules that are responsible for having data that the scripts above are required to have.
+        </div>
+        <p></p>
+        <p>
+            These modules are called every time there's a request, or when it's needed. These will often be called at the start of a script or when a new request is being made.
+        </p>
+        <table class="doc-table">
+            <thead>
+                <tr>
+                    <th>apiKey</th>
+                    <th>url</th>
+                    <th>rauth</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>The apiKey is responsible for having the information for the random API key saved for that specific ROBLOX server instance.</td>
+                    <td>The URL has the target endpoint / site to contact for each request. The URL <strong>MUST</strong> have a "/" on the end. The URL is the site / host to call for each request.</td>
+                    <td>rauth is the unhashed string that's responsible for the external JS server to verify that sensitive data or data affecting a database is coming from a trusted source. The rauth should only be used in the ROBLOX servers. <strong>DO NOT DISTRIBUTE IT.</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        <div class="dividersmall"></div>
+        <h3>Helpers</h3>
+        <p></p>
+        <div class="info-box">
+            This folder has some module scripts to make parsing and finding players easier for you intergrate. This is useful when adding new commands.
+        </div>
+        <p></p>
+        <p>
+            There are 2 default module scripts: "getPlayerByPartial" and "seperate". "getPlayerByPartial" has 2 functions of :FindPlayerObject(partialName:string) and :FindPlayerCharacter(partialName:string). This will return player objects / characters or nil based on characters
+            that are provided into the function. "seperate" is responsible for parsing. It takes arguments of "data", "count", "bychar".
+        </p>
+        <table class="doc-table">
+            <thead>
+                <tr>
+                    <th>data</th>
+                    <th>count</th>
+                    <th>bychar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>The string that should be parsed.</td>
+                    <td>Maximum number of splits before parsing stops.</td>
+                    <td>What character to seperate by.</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="dividersmall"></div>
+        <h3>Executors</h3>
+        <p></p>
+        <div class="info-box">
+            These are the module scripts that are tied to each command execution.
+        </div>
+        <p></p>
+        <p>
+            These module scripts are the command executors. Each module script is responsible for each command (see <i>getInboundData</i>). These module scripts should <strong>directly</strong> return a function, not an array, not a dictionary.
+            They must always take 1 paramater which is the leftover characters after the command name.
+            For example:
+        </p>
+        <pre>
+            <code class="code-block">return function(data)
+    print(data)
+end</code>
+        </pre>
+        <div class="divider"></div>
+        <div class="warning-box">
+            <strong></strong> To see how to set up new commands or how to set the whole thing up overall, see our <a href="/roblox/api/setup">setup tutorial</a>!
+        </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
+  <script src="/script.js"></script>
+</body>
+</html>
